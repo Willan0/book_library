@@ -6,22 +6,35 @@ import '../../../constant/dao_constant.dart';
 
 class BookDAOImpl extends BookDAO{
   @override
-  void deleteBook(int bookId) => _getBookBox.delete(bookId);
+  void deleteBook(String bookId) => _getBookBox.delete(bookId);
 
   @override
   Stream<List<Books>?> getBookFromStream() =>Stream.value(getBooks());
 
   @override
-  List<Books> getBooks()=> _getBookBox.values.toList();
+  List<Books>? getBooks()=>_getBookBox.values.toList();
 
   @override
-  void saveBook(Books books) {
-     _getBookBox.put(books.primaryIsbn10, books);
+  void saveBook(String id,Books books) {
+     _getBookBox.put(id, books);
   }
 
   @override
   Stream watchBookBox()=> _getBookBox.watch();
 
   final Box<Books> _getBookBox = Hive.box<Books>(kBoxNameForBook);
+
+  @override
+  List? getKey()=> _getBookBox.keys.toList();
+
+  @override
+  void clearBox() {
+    _getBookBox.clear();
+  }
+
+  @override
+  Stream<List?> getKeyFromStream() => Stream.value(getKey());
+
+
 
 }

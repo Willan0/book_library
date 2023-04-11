@@ -3,6 +3,7 @@ import 'package:book_library/data/vos/item_vo/item_vo.dart';
 
 import '../vos/books_vo/book_vo.dart';
 import '../vos/result_vo/result_vo.dart';
+import '../vos/shelf_vo/shelf_vo.dart';
 
 abstract class LibraryDataApply{
 
@@ -19,7 +20,13 @@ abstract class LibraryDataApply{
 
   Stream<List<Books>?> getBookFromDataBase();
 
+  Stream<List?> getKeyFromDataBase();
+
+  Stream<List<ShelfVO>?> getShelfFromDataBase();
+
   void saveSearchHistory(String query);
+
+  void createShelf(String shelfName);
 
   List<String>? getSearchHistoryList();
 }

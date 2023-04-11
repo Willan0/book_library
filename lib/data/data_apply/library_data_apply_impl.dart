@@ -5,6 +5,7 @@ import 'package:book_library/data/vos/result_vo/result_vo.dart';
 import 'package:book_library/persistent/dao/book_dao/book_dao.dart';
 import 'package:book_library/persistent/dao/book_dao/book_dao_impl.dart';
 import 'package:book_library/persistent/dao/result_dao/result_dao_impl.dart';
+import 'package:book_library/persistent/dao/shelf_dao/shelf_dao_impl.dart';
 import 'package:stream_transform/stream_transform.dart';
 
 import '../../network/data_agent/library_data_agent.dart';
@@ -12,6 +13,8 @@ import '../../network/data_agent/library_data_agent_impl.dart';
 import '../../persistent/dao/result_dao/result_dao.dart';
 import '../../persistent/dao/search_dao/search_dao.dart';
 import '../../persistent/dao/search_dao/search_dao_impl.dart';
+import '../../persistent/dao/shelf_dao/shelf_dao.dart';
+import '../vos/shelf_vo/shelf_vo.dart';
 
 class LibraryDataApplyImpl extends LibraryDataApply{
   LibraryDataApplyImpl._();
@@ -21,6 +24,7 @@ class LibraryDataApplyImpl extends LibraryDataApply{
   final LibraryDataAgent _libraryDataAgent = LibraryDataAgentImpl();
   final ResultDAO _resultDAO = ResultDAOImpl();
   final BookDAO _bookDAO = BookDAOImpl();
+  final ShelfDAO _shelfDAO = ShelfDAOImpl();
   final SearchHistoryDAO _searchDao = SearchHistoryDAOImpl();
 
   @override
@@ -61,6 +65,24 @@ class LibraryDataApplyImpl extends LibraryDataApply{
 
   @override
   Stream<List<Books>?> getBookFromDataBase() => _bookDAO.watchBookBox().startWith(_bookDAO.getBookFromStream()).map((event) => _bookDAO.getBooks());
+
+
+
+  @override
+  Stream<List?> getKeyFromDataBase()
+    => _bookDAO.watchBookBox().startWith(_bookDAO.getKeyFromStream()).map((event) => _bookDAO.getKey());
+
+  @override
+  void createShelf(String shelfName){
+    ShelfVO shelf = ShelfVO(DateTime.now().microsecondsSinceEpoch.toString(), shelfName);
+     return _shelfDAO.saveShelf(shelf);
+  }
+
+  @override
+  Stream<List<ShelfVO>?> getShelfFromDataBase() {
+    return _shelfDAO.watchShelfBox().startWith(_shelfDAO.getShelfFromStream()).map((event) => _shelfDAO.getShelf());
+  }
+
 
 
 

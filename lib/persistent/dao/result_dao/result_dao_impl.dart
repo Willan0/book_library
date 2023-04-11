@@ -13,6 +13,7 @@ class ResultDAOImpl extends ResultDAO{
 
   @override
   Results? getResults(String publishedDate) {
+    final getResult = _getResultBox.values.toList();
     return _getResultBox.get(publishedDate);
   }
 

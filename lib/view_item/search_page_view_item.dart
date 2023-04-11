@@ -1,5 +1,6 @@
 import 'package:book_library/bloc/search_bloc.dart';
 import 'package:book_library/data/vos/volume_info/volume_info.dart';
+import 'package:book_library/pages/detail_page.dart';
 import 'package:book_library/utils/extension.dart';
 import 'package:book_library/widgets/easy_text.dart';
 import 'package:flutter/material.dart';
@@ -114,7 +115,7 @@ class SearchFakeView extends StatelessWidget {
           const SizedBox(
             width: kWh50x,
           ),
-          EasyText(text: label)
+          EasyText(text: label,fontColor: cGrey,)
         ],
       ),
     );
@@ -133,15 +134,26 @@ class SearchListViewItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding: const EdgeInsets.all(kMp10x),
-        child: ListTileFake(
-          leading: ClipRRect(
-            borderRadius: const BorderRadius.all(Radius.circular(kRi15x)),
-            child: EasyImage(
-              imgUrl: volumeInfoVO.imageLinks?.thumbnail ?? '',
+        child: GestureDetector(
+          onTap: (){
+            context.nextScreen(context, DetailPage(
+                bookName: volumeInfoVO.title ?? '',
+                imageLink: volumeInfoVO.imageLinks?.thumbnail ?? '',
+                author: volumeInfoVO.authors?.first ?? '',
+                description: volumeInfoVO.description ?? ''
+            ));
+          },
+          child: ListTileFake(
+            leading: ClipRRect(
+              borderRadius: const BorderRadius.all(Radius.circular(kRi15x)),
+              child: EasyImage(
+                height: kWh160x,
+                imgUrl: volumeInfoVO.imageLinks?.thumbnail ?? '',
+              ),
             ),
+            title: volumeInfoVO.title ?? '',
+            subTitle: volumeInfoVO.printType ?? '',
           ),
-          title: volumeInfoVO.title ?? '',
-          subTitle: volumeInfoVO.printType ?? '',
         ));
   }
 }

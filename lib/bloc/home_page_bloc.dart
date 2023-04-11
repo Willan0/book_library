@@ -16,14 +16,12 @@ class HomePageBloc extends ChangeNotifier {
   final List<Books> _getBookList = [];
   List<Lists> _getListsList = [];
   Results? _getResults;
-  bool _favourite = false;
 
   // getter
   List<Books> get getBookList => _getBookList;
 
   List<Lists> get getListsList => _getListsList;
 
-  bool get getFavourite => _favourite;
   // state instance
   final LibraryDataApply _dataApply = LibraryDataApplyImpl();
 
@@ -36,24 +34,15 @@ class HomePageBloc extends ChangeNotifier {
       _getResults = event;
       if (_getResults != null) {
         _getListsList = _getResults?.lists ?? [];
+        for (var list in _getListsList) {
+          _getBookList.addAll(list.books ?? []);
+        }
         notifyListeners();
       }
     });
   }
 
-  void save(){
-      var lists = _getResults?.lists;
-      var temp = lists?.map((element) {
-        return element.books?.map((e) {
-          e.isSelected = true;
-          return e;
-        }).toList();
-      }).toList();
-      List<Books> books =[];
-      temp?.forEach((bookList) {
-        bookList?.forEach((book) {
-          books.add(book);
-        });
-      });
+  void save(String listName,Books book){
+    _bookDAO.saveBook('$listName,${book.title}',book);
   }
 }

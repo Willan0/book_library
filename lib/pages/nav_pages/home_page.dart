@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../../view_item/home_page_view_item.dart';
+import '../../widgets/search_view_widget.dart';
 
 
 class HomePage extends StatelessWidget {
