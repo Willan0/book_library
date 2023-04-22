@@ -27,7 +27,7 @@ class CreateShelfBloc extends ChangeNotifier{
   }
   void createShelf(){
     var shelfName = _shelfController.text.toString();
-    _dataApply.createShelf(shelfName);
+    _dataApply.createShelf(shelfName,[]);
   }
 
   @override

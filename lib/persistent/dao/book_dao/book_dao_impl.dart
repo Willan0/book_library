@@ -1,3 +1,4 @@
+
 import 'package:book_library/data/vos/books_vo/book_vo.dart';
 import 'package:book_library/persistent/dao/book_dao/book_dao.dart';
 import 'package:hive/hive.dart';
@@ -5,36 +6,46 @@ import 'package:hive/hive.dart';
 import '../../../constant/dao_constant.dart';
 
 class BookDAOImpl extends BookDAO{
-  @override
-  void deleteBook(String bookId) => _getBookBox.delete(bookId);
 
-  @override
-  Stream<List<Books>?> getBookFromStream() =>Stream.value(getBooks());
-
-  @override
-  List<Books>? getBooks()=>_getBookBox.values.toList();
-
-  @override
-  void saveBook(String id,Books books) {
-     _getBookBox.put(id, books);
-  }
-
-  @override
-  Stream watchBookBox()=> _getBookBox.watch();
+  BookDAOImpl._();
+  static final BookDAOImpl _singleton= BookDAOImpl._();
+  factory BookDAOImpl() => _singleton;
 
   final Box<Books> _getBookBox = Hive.box<Books>(kBoxNameForBook);
 
   @override
-  List? getKey()=> _getBookBox.keys.toList();
-
-  @override
-  void clearBox() {
-    _getBookBox.clear();
+  List<Books>? getBookFromDatabase() {
+    List<Books>? books = _getBookBox.values.toList();
+    books.sort((a, b) => b.order!.compareTo(a.order!),);
+    return books;
   }
 
   @override
-  Stream<List?> getKeyFromStream() => Stream.value(getKey());
+  Stream<List<Books>?> getBookFromDatabaseStream() => Stream.value(getBookFromDatabase());
 
+  @override
+  void saveBook(List<Books> bookList) {
+    int order = 0;
+    final temp = getBookFromDatabase();
+    if(temp!=null && temp.isNotEmpty){
+        order = temp.last.order!;
+    }
+    for(Books book in bookList){
+      order++;
+      book.order = order;
+      _getBookBox.put(book.title, book);
+    }
+  }
 
+  @override
+  Stream watchBookBox() => _getBookBox.watch();
+
+  @override
+  void clearBookBox() {
+    var books = _getBookBox.values.toList();
+    for(var book in books){
+      _getBookBox.delete(book.title);
+    }
+  }
 
 }

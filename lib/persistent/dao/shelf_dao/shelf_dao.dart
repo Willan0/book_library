@@ -4,9 +4,11 @@ abstract class ShelfDAO{
 
   void saveShelf(ShelfVO shelf);
 
-  List<ShelfVO>? getShelf();
+  List<ShelfVO>? getShelfFromDatabase();
+
+  ShelfVO? getShelfByName(String shelfName);
 
   Stream watchShelfBox();
 
-  Stream<List<ShelfVO>?> getShelfFromStream();
+  Stream<List<ShelfVO>?> getShelfFromDatabaseStream();
 }

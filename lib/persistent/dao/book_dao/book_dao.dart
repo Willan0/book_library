@@ -1,19 +1,15 @@
-import 'package:book_library/data/vos/books_vo/book_vo.dart';
+import '../../../data/vos/books_vo/book_vo.dart';
 
 abstract class BookDAO{
-  void saveBook(String id,Books books);
 
-  List? getKey();
+  void saveBook(List<Books> bookList);
 
-  List<Books>? getBooks();
-
-  void clearBox();
+  List<Books>? getBookFromDatabase();
 
   Stream watchBookBox();
 
-  Stream<List<Books>?> getBookFromStream();
+  Stream<List<Books>?> getBookFromDatabaseStream();
 
-  Stream<List?> getKeyFromStream();
-  void deleteBook(String bookId);
+  void clearBookBox();
 
 }

@@ -10,20 +10,23 @@ class ShelfDAOImpl extends ShelfDAO{
   static final ShelfDAOImpl _singleton = ShelfDAOImpl._();
   factory ShelfDAOImpl ()=> _singleton;
   @override
-  List<ShelfVO>? getShelf() => _shelfBox.values.toList();
+  List<ShelfVO>? getShelfFromDatabase() => _shelfBox.values.toList();
 
   @override
-  Stream<List<ShelfVO>?> getShelfFromStream() => Stream.value(getShelf());
+  Stream<List<ShelfVO>?> getShelfFromDatabaseStream() => Stream.value(getShelfFromDatabase());
 
   @override
   void saveShelf(ShelfVO shelf) {
-    _shelfBox.put(shelf.id, shelf);
+    _shelfBox.put(shelf.shelfName.toString(), shelf);
   }
 
   @override
   Stream watchShelfBox() => _shelfBox.watch();
 
   final Box<ShelfVO> _shelfBox = Hive.box<ShelfVO>(kShelfBoxName);
+
+  @override
+  ShelfVO? getShelfByName(String shelfName) => _shelfBox.get(shelfName);
 
 
 }

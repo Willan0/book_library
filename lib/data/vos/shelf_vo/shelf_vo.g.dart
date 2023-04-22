@@ -19,17 +19,20 @@ class ShelfVOAdapter extends TypeAdapter<ShelfVO> {
     return ShelfVO(
       fields[0] as String?,
       fields[1] as String?,
+      (fields[2] as List).cast<Books>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, ShelfVO obj) {
     writer
-      ..writeByte(2)
+      ..writeByte(3)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.bookName);
+      ..write(obj.shelfName)
+      ..writeByte(2)
+      ..write(obj.bookList);
   }
 
   @override

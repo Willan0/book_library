@@ -109,10 +109,18 @@ class Books {
   @HiveField(24)
   List<BuyLinks>? buyLinks;
 
-  bool isSelected;
+  @HiveField(25)
+  bool? isSelected;
+
+  @HiveField(26)
+  int? order;
+
+  @HiveField(27)
+  String? myListName;
 
   Books(
       {this.ageGroup,
+        this.order,
         this.amazonProductUrl,
         this.articleChapterLink,
         this.author,
@@ -137,7 +145,8 @@ class Books {
         this.updatedDate,
         this.weeksOnList,
         this.buyLinks,
-        this.isSelected =false
+        this.isSelected =false,
+        this.myListName
       });
 
   factory Books.fromJson(Map<String,dynamic> json) => _$BooksFromJson(json);

@@ -18,9 +18,9 @@ void main() async{
   Hive.registerAdapter(ResultsAdapter());
   Hive.registerAdapter(ShelfVOAdapter());
 
-  await Hive.openBox<Results>(kResultBox);
-  await Hive.openBox<String>(kBoxNameForSearchHistoryVO);
+  await Hive.openBox<Lists>(kBoxNameForLists);
   await Hive.openBox<Books>(kBoxNameForBook);
+  await Hive.openBox<String>(kBoxNameForSearchHistoryVO);
   await Hive.openBox<ShelfVO>(kShelfBoxName);
 
   runApp(const MyApp());

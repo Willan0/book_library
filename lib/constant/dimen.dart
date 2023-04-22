@@ -6,11 +6,14 @@ const double kWh30x = 30;
 const double kWh40x = 40;
 const double kWh50x = 50;
 const double kWh100x = 100;
+const double kWh150x = 150;
 const double kWh160x = 160;
 const double kWh205x = 205;
+const double kWh220x = 220;
 const double kWh240x = 240;
 const double kWh260x = 260;
 const double kWh300x = 300;
+const double kWh310x = 310;
 const double kWh360x = 360;
 
 // margin and padding

@@ -1,5 +1,6 @@
 import 'package:book_library/bloc/home_page_bloc.dart';
 import 'package:book_library/constant/dimen.dart';
+import 'package:book_library/constant/string.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -13,7 +14,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_)=> HomePageBloc('2023-03-12'),
+      create: (_)=> HomePageBloc(kPublishedDate),
       child: Scaffold(
         body: Consumer<HomePageBloc>(
           builder: (_,bloc,__){
@@ -22,12 +23,7 @@ class HomePage extends StatelessWidget {
               children: [
                 const SizedBox(height: kMp30x,),
                 const SearchView(),
-                bloc.getListsList.isEmpty?const Center(child: CircularProgressIndicator()):Expanded(
-                  child: ListView.builder(
-                    itemCount: bloc.getListsList.length,
-                    itemBuilder: (_,index)=> BookView(lists: bloc.getListsList[index],),
-              ),
-                ),
+                bloc.getListsList.isEmpty?const Center(child: CircularProgressIndicator()):CarouselAndBookView(listsList: bloc.getListsList),
             ]);
           },
         ),
@@ -35,6 +31,8 @@ class HomePage extends StatelessWidget {
     );
   }
 }
+
+
 
 
 

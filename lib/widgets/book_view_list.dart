@@ -14,12 +14,13 @@ import 'more_item.dart';
 
 class BookListView extends StatelessWidget {
   const BookListView({
-    Key? key, required this.books, required this.listName,
+    Key? key, required this.books, required this.listName,this.isHome = true
 
   }) : super(key: key);
 
   final List<Books> books;
   final String listName;
+  final bool isHome;
 
 
   @override
@@ -35,7 +36,7 @@ class BookListView extends StatelessWidget {
             child: MoreItem(text: listName),
           ),
           const SizedBox(height: kMp20x,),
-          BookListViewItem(books: books,listName: listName,)
+          BookListViewItem(books: books,listName: listName,isHome: isHome,)
         ],
       ),
     );
@@ -45,12 +46,13 @@ class BookListView extends StatelessWidget {
 class BookListViewItem extends StatelessWidget {
   const BookListViewItem({
     Key? key, required this.books
-    , required this.listName,  this.isChecked = false
+    , required this.listName, required this.isHome,
   }) : super(key: key);
 
   final List<Books> books;
   final String listName;
-  final bool isChecked;
+  final bool isHome;
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,68 +60,91 @@ class BookListViewItem extends StatelessWidget {
       child: ListView.builder(
         itemCount: books.length,
         scrollDirection: Axis.horizontal,
-        itemBuilder: (context, index) => Column(
-          children: [
-            GestureDetector(
-              onLongPress: (){
-                showBottomSheet(
-                  enableDrag: true,
-                  context: context,
-                  builder: (context) => BottomSheetView(books: books[index]),);
-              },
-              onTap: (){
-                context.nextScreen(context,  DetailPage(
-                  imageLink: books[index].bookImage ?? '',
-                  description: books[index].description ?? '',
-                  author: books[index].author ?? '',
-                  bookName: books[index].title ?? '',
-                ));
-
-              },
-              child: Container(
-                width: kWh160x,
-                height: kWh300x,
-                margin:const EdgeInsets.only(left: kMp10x),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Stack(
-                      children: [
-                        Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(kMp10x)
-                        ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(kMp10x),
-                          child: EasyImage(
-                            height: kWh240x,
-                              imgUrl: books[index].bookImage ?? ''),
-                        ),
-                      ),
-                        Padding(
-                          padding: const EdgeInsets.only(right: kMp20x),
-                          child: Align(
-                            alignment: Alignment.topRight,
-                            child: CircleAvatar(
-                              radius: kRi18x,
-                              backgroundColor: cWhite,
-                              child:IconButton(
-                                  onPressed: isChecked?null:() => context.getHomePageBlocInstance().save(listName,books[index]),
-                                  icon: const Center(child:  Icon(CupertinoIcons.heart,color:Colors.red,)),
-                                ),
-                            ),
-                          ),
-                        )
-                    ]),
-                    const SizedBox(height: kMp3x,),
-                    EasyText(text: books[index].title ?? '',fontColor: cSecondaryTextColor,fontSize: 12,)
-                  ],
-                ),),
-            ),
-          ],
-        ),
+        itemBuilder: (context, index) {return 
+        isHome
+            ?BookOnlyView(books: books[index],isHome: isHome, listName: listName)
+            : (books[index].isSelected ==true)
+            ? BookOnlyView(books: books[index], isHome: isHome,listName: listName)
+            : const SizedBox.shrink();
+          },
       ),
     );
+  }
+}
+
+class BookOnlyView extends StatelessWidget {
+  const BookOnlyView({
+    Key? key,
+    required this.books,
+    required this.listName, required this.isHome,
+  }) : super(key: key);
+
+  final Books books;
+  final bool isHome;
+  final String listName;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+    children: [
+      GestureDetector(
+        onLongPress: (){
+          showBottomSheet(
+            enableDrag: true,
+            context: context,
+            builder: (context) => BottomSheetView(books: books),);
+        },
+        onTap: (){
+          context.nextScreen(context,  DetailPage(
+            imageLink: books.bookImage ?? '',
+            description: books.description ?? '',
+            author: books.author ?? '',
+            bookName: books.title ?? '',
+          ));
+          context.getHomePageBlocInstance().onTapBook(books,listName);
+        },
+        child: Container(
+          width: kWh160x,
+          height: kWh300x,
+          margin:const EdgeInsets.only(left: kMp10x),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Stack(
+                children: [
+                  Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(kMp10x)
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(kMp10x),
+                    child: EasyImage(
+                      height: kWh220x,
+                        imgUrl: books.bookImage ?? ''),
+                  ),
+                ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: kMp20x),
+                    child: Align(
+                      alignment: Alignment.topRight,
+                      child: CircleAvatar(
+                        radius: kRi18x,
+                        backgroundColor: cWhite,
+                        child:IconButton(
+                            onPressed: () => isHome?context.getHomePageBlocInstance().onTapFavorite(listName,books):context.getLibraryBlocInstance().onTapFavorite(listName, books),
+                            icon:  Center(child:  Icon((books.isSelected ?? false)?CupertinoIcons.heart_fill:CupertinoIcons.heart,color:(books.isSelected ?? false)?Colors.red:Colors.amber,)),
+                          ),
+                      ),
+                    ),
+                  )
+              ]),
+              const SizedBox(height: kMp3x,),
+              EasyText(text: books.title ?? '',fontColor: cSecondaryTextColor,fontSize: 12,)
+            ],
+          ),),
+      ),
+    ],
+        );
   }
 }
 
@@ -159,7 +184,8 @@ class BottomSheetView extends StatelessWidget {
           child: Row(children: [
             Expanded(
               child: TextButton(onPressed: (){
-                context.nextScreen(context, const ShelfPage(text: 'Add to new',));
+                context.previousScreen(context);
+                context.nextScreen(context, ShelfPage(text: 'Add to new',bookVO: books,));
               },
                   style: TextButton.styleFrom(
                     side: const BorderSide(

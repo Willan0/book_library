@@ -1,48 +1,88 @@
 
-import 'package:book_library/data/vos/result_vo/result_vo.dart';
+
 import 'package:flutter/cupertino.dart';
 
 import '../data/data_apply/library_data_apply.dart';
 import '../data/data_apply/library_data_apply_impl.dart';
 import '../data/vos/books_vo/book_vo.dart';
 import '../data/vos/lists_vo/lists_vo.dart';
-import '../persistent/dao/book_dao/book_dao.dart';
-import '../persistent/dao/book_dao/book_dao_impl.dart';
+import '../persistent/dao/list_dao/list_dao_impl.dart';
+
 
 
 class HomePageBloc extends ChangeNotifier {
-
+bool _isDispose= false;
   // state variable
-  final List<Books> _getBookList = [];
   List<Lists> _getListsList = [];
-  Results? _getResults;
+  List<Books> _getTapBooks =[];
+
 
   // getter
-  List<Books> get getBookList => _getBookList;
 
   List<Lists> get getListsList => _getListsList;
+  List<Books> get getTapBooks => _getTapBooks;
 
   // state instance
   final LibraryDataApply _dataApply = LibraryDataApplyImpl();
 
-  final BookDAO _bookDAO = BookDAOImpl();
+  final ListDAOImpl _listDAO = ListDAOImpl();
+
 
   HomePageBloc(String publishedDate) {
-    _dataApply.getResultFromNetwork(publishedDate);
 
-    _dataApply.getResultFromDataBase(publishedDate).listen((event) {
-      _getResults = event;
-      if (_getResults != null) {
-        _getListsList = _getResults?.lists ?? [];
-        for (var list in _getListsList) {
-          _getBookList.addAll(list.books ?? []);
-        }
+    _dataApply.clearBookBox();
+
+    _dataApply.getBookFromDatabaseStream().listen((event) {
+      if(event!=null && event.isNotEmpty){
+        _getTapBooks = event;
+        notifyListeners();
+      }
+    });
+
+    _dataApply.getListsListFromNetwork(publishedDate);
+
+    _dataApply.getListsFromDataBaseStream().listen((event) {
+      if(event != null && event.isNotEmpty ){
+        _getListsList = event;
         notifyListeners();
       }
     });
   }
 
-  void save(String listName,Books book){
-    _bookDAO.saveBook('$listName,${book.title}',book);
+  void onTapFavorite(String listName,Books book){
+    final favouriteList = _listDAO.listBox.get(listName);
+
+    if(favouriteList !=null){
+      List<Books> favouriteBooks = favouriteList.books ?? [];
+      for(var favouriteBook in favouriteBooks){
+        if(favouriteBook.title == book.title){
+          favouriteBook.isSelected = !(favouriteBook.isSelected ?? false);
+        }
+      }
+      _listDAO.saveLists(_getListsList);
+    }
+  }
+
+  void onTapBook(Books book,String listName){
+    book.myListName = listName;
+    List<Books> books = [];
+    books.add(book);
+    _getTapBooks = books;
+    _dataApply.saveBook(_getTapBooks);
+  }
+
+  @override
+  void notifyListeners() {
+    // TODO: implement notifyListeners
+    if(!_isDispose){
+      super.notifyListeners();
+    }
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    _isDispose = true;
   }
 }
