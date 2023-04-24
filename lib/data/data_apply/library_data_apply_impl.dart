@@ -70,7 +70,7 @@ class LibraryDataApplyImpl extends LibraryDataApply{
   }
 
   @override
-  void saveBook(List<Books> bookList) => _bookDAO.saveBook(bookList);
+  void saveBook(Books book) => _bookDAO.saveBook(book);
 
   @override
   void clearBookBox() => _bookDAO.clearBookBox();

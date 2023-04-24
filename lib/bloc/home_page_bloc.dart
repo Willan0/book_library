@@ -65,10 +65,7 @@ bool _isDispose= false;
 
   void onTapBook(Books book,String listName){
     book.myListName = listName;
-    List<Books> books = [];
-    books.add(book);
-    _getTapBooks = books;
-    _dataApply.saveBook(_getTapBooks);
+    _dataApply.saveBook(book);
   }
 
   @override

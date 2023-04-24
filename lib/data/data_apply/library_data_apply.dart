@@ -29,7 +29,7 @@ abstract class LibraryDataApply{
 
   List<String>? getSearchHistoryList();
 
-  void saveBook(List<Books> bookList);
+  void saveBook(Books book);
 
   void clearBookBox();
 }

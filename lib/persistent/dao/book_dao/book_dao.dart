@@ -2,7 +2,7 @@ import '../../../data/vos/books_vo/book_vo.dart';
 
 abstract class BookDAO{
 
-  void saveBook(List<Books> bookList);
+  void saveBook(Books book);
 
   List<Books>? getBookFromDatabase();
 

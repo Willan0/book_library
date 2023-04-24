@@ -23,7 +23,9 @@ class HomePage extends StatelessWidget {
               children: [
                 const SizedBox(height: kMp30x,),
                 const SearchView(),
-                bloc.getListsList.isEmpty?const Center(child: CircularProgressIndicator()):CarouselAndBookView(listsList: bloc.getListsList),
+                bloc.getListsList.isEmpty?
+                const Center(child: CircularProgressIndicator())
+                    :CarouselAndBookView(listsList: bloc.getListsList),
             ]);
           },
         ),

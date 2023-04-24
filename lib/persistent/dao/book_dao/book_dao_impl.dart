@@ -16,7 +16,7 @@ class BookDAOImpl extends BookDAO{
   @override
   List<Books>? getBookFromDatabase() {
     List<Books>? books = _getBookBox.values.toList();
-    books.sort((a, b) => b.order!.compareTo(a.order!),);
+    books.sort((a, b) => a.order!.compareTo(b.order!),);
     return books;
   }
 
@@ -24,17 +24,12 @@ class BookDAOImpl extends BookDAO{
   Stream<List<Books>?> getBookFromDatabaseStream() => Stream.value(getBookFromDatabase());
 
   @override
-  void saveBook(List<Books> bookList) {
+  void saveBook(Books book) {
     int order = 0;
-    final temp = getBookFromDatabase();
-    if(temp!=null && temp.isNotEmpty){
-        order = temp.last.order!;
-    }
-    for(Books book in bookList){
       order++;
       book.order = order;
       _getBookBox.put(book.title, book);
-    }
+
   }
 
   @override
